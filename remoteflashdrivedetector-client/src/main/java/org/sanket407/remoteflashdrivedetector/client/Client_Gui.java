@@ -261,7 +261,7 @@ class Client_Gui {
         searchResultsFrame.repaint();
         searchResultsFrame.pack();
         searchResultsFrame.setLocation(200,200);
-        client.startService();
+        client.startService1();
         client.getServerSignal();
 
 
