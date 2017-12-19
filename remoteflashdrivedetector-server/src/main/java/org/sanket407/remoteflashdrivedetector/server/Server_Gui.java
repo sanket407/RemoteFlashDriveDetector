@@ -1,4 +1,4 @@
-package org.sanket407.remoteflashdrivedetector;
+package org.sanket407.remoteflashdrivedetector.server;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;

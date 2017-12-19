@@ -1,11 +1,13 @@
-package org.sanket407.remoteflashdrivedetector;
+package org.sanket407.remoteflashdrivedetector.client;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
 
@@ -50,15 +52,15 @@ class Client
 
         try
         {
-            MulticastSocket socket = new MulticastSocket(port);
-            socket.setInterface(InetAddress.getLocalHost());
+            InetAddress bind = InetAddress.getByName("192.168.1.105");
+            MulticastSocket socket = new MulticastSocket(new InetSocketAddress(port));
             socket.joinGroup(group);
 
             DatagramPacket packet = new DatagramPacket(new byte[100], 100);
 
 
             socket.receive(packet);
-
+            
             serverName = new String( packet.getData(), 0,
                                      packet.getLength() );
 
@@ -101,7 +103,7 @@ class Client
 
     }
 
-    void startService()
+    void startService1()
     {
         oldListRoot = File.listRoots();
 
@@ -115,6 +117,65 @@ class Client
 
 
                     try{
+                        
+                   
+                        if (File.listRoots().length > oldListRoot.length) {
+                            sendToServer.println("inserted");
+                            oldListRoot = File.listRoots();
+                            detected++;
+
+                        } else if (File.listRoots().length < oldListRoot.length) {
+                            sendToServer.println("removed");
+
+                            oldListRoot = File.listRoots();
+                            detected--;
+                        }
+                        else
+                        {    
+                            Thread.sleep(1000);
+                            if(clientSocket.isClosed())
+                                break;
+                        }
+                    }
+                    catch(Exception e)
+                    {}
+
+                }
+            }
+        }).start();
+
+
+
+
+    }
+
+    
+    
+    
+    void startService2()
+    {
+        try
+        {
+            Runtime.getRuntime().exec("mount");
+        }
+        catch (IOException e1)
+        {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+
+
+
+        new Thread(new Runnable(){
+
+            public void run(){
+                while (true) {
+
+
+
+                    try{
+                        
+                   
                         if (File.listRoots().length > oldListRoot.length) {
                             sendToServer.println("inserted");
                             oldListRoot = File.listRoots();

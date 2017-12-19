@@ -9,14 +9,44 @@
         <artifactId>remoteflashdrivedetector</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    
+
     <groupId>org.sanket407.remoteflashdrivedetector</groupId>
     <artifactId>remoteflashdrivedetector-client</artifactId>
     <version>1.0-SNAPSHOT</version>
-    
+
     <name>remoteflashdrivedetector-client</name>
     <url>http://maven.apache.org</url>
-    
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>org.sanket407.remoteflashdrivedetector.client.Client_Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <mainClass>org.sanket407.remoteflashdrivedetector.client.Client_Main</mainClass>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
+    </build>
+
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

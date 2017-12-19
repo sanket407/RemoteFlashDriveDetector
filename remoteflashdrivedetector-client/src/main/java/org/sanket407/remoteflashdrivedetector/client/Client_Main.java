@@ -1,4 +1,4 @@
-package org.sanket407.remoteflashdrivedetector;
+package org.sanket407.remoteflashdrivedetector.client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

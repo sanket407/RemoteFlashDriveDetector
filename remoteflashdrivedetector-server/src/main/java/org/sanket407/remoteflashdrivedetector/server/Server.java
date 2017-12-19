@@ -1,4 +1,4 @@
-package org.sanket407.remoteflashdrivedetector;
+package org.sanket407.remoteflashdrivedetector.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -54,8 +55,8 @@ class Server
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    MulticastSocket socket = new MulticastSocket(port);
-                    socket.setInterface(InetAddress.getLocalHost());
+                    InetAddress bind = InetAddress.getByName("192.168.1.105");
+                    MulticastSocket socket = new MulticastSocket(new InetSocketAddress(bind,port));
                     socket.joinGroup(group);
 
 
