@@ -29,26 +29,19 @@ class Server
 
     void initializeServer(String name) 
     {
-
-
         try{
             this.ip = InetAddress.getLocalHost(); 
             this.name = name;
-
-
-
             this.clientCount = 0;
             this.group = InetAddress.getByName("237.0.0.1");
             this.port = 9000;
             this.clientSocketMap = new HashMap<Socket,String>();
         }
         catch(Exception e){}
-
     }
 
     void startServer()throws IOException
     {
-
         serverSocket = new ServerSocket(this.port);
 
         final byte[] bt = this.name.getBytes();
@@ -59,11 +52,9 @@ class Server
                     MulticastSocket socket = new MulticastSocket(new InetSocketAddress(bind,port));
                     socket.joinGroup(group);
 
-
-                    while(true) {
-
+                    while(true) 
+                    {
                         socket.send(new DatagramPacket(bt, bt.length, group, port));
-
                         Thread.sleep(1*1000);
                     }
                 } catch (Exception e) {
@@ -71,60 +62,40 @@ class Server
                 }
             }
         }).start();
-
-
     }
 
-
     void acceptConnections() {
-
         new Thread(new Runnable(){
-
             public void run(){
-
-
                 try
                 {
-
-                    while(true)
+                   while(true)
                     {
                         Socket clientSocket =  serverSocket.accept();
-
                         clientCount++;
                         BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
                         String name = br.readLine();
-                        System.out.println(name+" connected");
-
                         PrintWriter out = new PrintWriter (clientSocket.getOutputStream(),true);
                         out.println("accepted");
                         gui.addClient(clientSocket,name,clientSocket.getInetAddress(),clientSocket.getPort());
                         clientSocketMap.put(clientSocket,name);
                         startDetecting(clientSocket);
-
                         Thread.sleep(1000);
-
-                    }}
-                catch (Exception e)
-                {}
-
+                    }
+                   }
+                    catch (Exception e)
+                    {
+                        System.out.println(e.toString());
+                    }
             } 
         }).start();
-
-
-
-
-
     }
 
     void startDetecting(final Socket clientSocket)
     {
-
         new Thread(new Runnable(){
-
             public void run()
             {
-
                 while (true)
                 {
                     try{
@@ -137,39 +108,24 @@ class Server
                             gui.removeClient(clientSocket);
                             clientCount--;
                             clientSocket.close(); 
-
                             break;
                         }
                         else if(status.equals("inserted"))
                         {
-                            //System.out.println(clientSocketMap.get(clientSocket)+" "+status);
                             gui.update(clientSocket,1);
                         }
                         else
                         {
-                            //  System.out.println(clientSocketMap.get(clientSocket)+" "+status);
                             gui.update(clientSocket,-1);
                         }
-
-
                         Thread.sleep(1000);}
 
-                    catch(Exception e){}
-
+                    catch(Exception e){
+                        System.out.println(e.toString());
+                    }
                 }
-
-
-
-
             }
-
-
-
         }).start();
-
-
-
-
     }
 
     void stopServer()
@@ -179,16 +135,9 @@ class Server
             Socket clientSocket = mapEntry.getKey();
             try{
                 PrintWriter sendToClient = new PrintWriter(clientSocket.getOutputStream(),true);
-
-
-
                 sendToClient.println("close");
             }
-
             catch(Exception e){}
         }
-
-
     }
-
 }

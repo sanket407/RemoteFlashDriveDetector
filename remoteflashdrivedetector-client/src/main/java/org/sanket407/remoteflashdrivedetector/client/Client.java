@@ -32,8 +32,6 @@ class Client
 
     void initializeClient(String name) 
     {
-
-
         try{
             this.name = name;
             this.ip = InetAddress.getLocalHost();
@@ -43,13 +41,10 @@ class Client
             System.out.println(this.name);
         }
         catch(Exception e){}
-
     }
 
     void searchServer()
     {
-
-
         try
         {
             InetAddress bind = InetAddress.getByName("192.168.1.105");
@@ -58,67 +53,43 @@ class Client
 
             DatagramPacket packet = new DatagramPacket(new byte[100], 100);
 
-
             socket.receive(packet);
-            
+
             serverName = new String( packet.getData(), 0,
                                      packet.getLength() );
 
-            System.out.println("Found " + serverName);
-
             serverIp = packet.getAddress();
 
-            System.out.println("IP "+ serverIp);
-
             serverPort = packet.getPort();
-
-            System.out.println("Port"+ serverPort);
 
             detectedServerCount++;
 
             gui.addServer(serverName, serverIp, serverPort);
 
-
-
-
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-
-
-
-
     void connectToServer()throws Exception
     {
-
         clientSocket = new Socket(serverIp,serverPort);
         sendToServer = new PrintWriter(clientSocket.getOutputStream(), true);
         sendToServer.println(this.name);
         BufferedReader readFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
         return ;
-
     }
 
     void startService1()
     {
         oldListRoot = File.listRoots();
-
-
-
         new Thread(new Runnable(){
 
             public void run(){
                 while (true) {
-
-
-
                     try{
-                        
-                   
                         if (File.listRoots().length > oldListRoot.length) {
                             sendToServer.println("inserted");
                             oldListRoot = File.listRoots();
@@ -138,20 +109,14 @@ class Client
                         }
                     }
                     catch(Exception e)
-                    {}
-
+                    {
+                        System.out.println(e.toString());
+                    }
                 }
             }
         }).start();
-
-
-
-
     }
 
-    
-    
-    
     void startService2()
     {
         try
@@ -164,23 +129,14 @@ class Client
             e1.printStackTrace();
         }
 
-
-
         new Thread(new Runnable(){
-
             public void run(){
                 while (true) {
-
-
-
                     try{
-                        
-                   
                         if (File.listRoots().length > oldListRoot.length) {
                             sendToServer.println("inserted");
                             oldListRoot = File.listRoots();
                             detected++;
-
                         } else if (File.listRoots().length < oldListRoot.length) {
                             sendToServer.println("removed");
 
@@ -195,24 +151,17 @@ class Client
                         }
                     }
                     catch(Exception e)
-                    {}
-
+                    {
+                        System.out.println(e.toString());
+                    }
                 }
             }
         }).start();
-
-
-
-
     }
-
 
     void getServerSignal()
     {
-
-
         new Thread(new Runnable() {
-
             public void run() {
                 // TODO Auto-generated method stub
                 try{
@@ -226,26 +175,21 @@ class Client
                     }
                 }
                 catch(Exception e){}
-
             }
         }).start();
-
-
-
     }
 
     void disconnectClient()
-    {try{
+    {
+        try{
 
-        this.clientSocket.close();
-        this.serverIp=null;
-        this.serverName=null;
-        this.port=0;
+            this.clientSocket.close();
+            this.serverIp=null;
+            this.serverName=null;
+            this.port=0;
+        }
+        catch(Exception e){
+            System.out.println(e.toString());
+        }
     }
-    catch(Exception e){}
-
-
-
-    }
-
 }

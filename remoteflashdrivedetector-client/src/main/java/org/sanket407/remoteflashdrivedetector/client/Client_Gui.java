@@ -25,13 +25,10 @@ class Client_Gui {
     Client client ;
     JButton enterButton;
 
-
     public Client_Gui()
     {   
         client = new Client();
         client.gui = this;
-
-
 
         startupFrame = new JFrame ("Client");
         final JPanel startupPanel = new JPanel();
@@ -49,9 +46,7 @@ class Client_Gui {
         startupFrame.pack();
         startupFrame.setLocation(200,200);
         startupFrame.setVisible(true);
-
-        // searchResultsFrame = new JFrame("Client");    
-
+       
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 // TODO Auto-generated method stub
@@ -84,7 +79,6 @@ class Client_Gui {
                 @SuppressWarnings("rawtypes")
                 SwingWorker aWorker = new SwingWorker() 
                 {
-
                     @Override
                     protected Object doInBackground() throws Exception {
                         // TODO Auto-generated method stub
@@ -98,15 +92,10 @@ class Client_Gui {
 
                         startupFrame.setVisible(false);
                         startupFrame.dispose();
-
                         searchResultsFrame.setVisible(true);
-
                     }
                 };
-
                 aWorker.execute();
-
-
             }
         });
         startupFrame.addWindowListener(new WindowAdapter() {
@@ -115,22 +104,10 @@ class Client_Gui {
                 System.exit(1);
             }
         });
-
-
-
-        //searchResultsFrame.pack();
-        // searchResultsFrame.setLocation(200,200);
-
-
-
-
-
     }
 
     void initializeSearchPanel()
     {
-
-
         searchResultsPanel = new JPanel();
         searchResultsPanel.setLayout(new GridBagLayout());
 
@@ -167,20 +144,13 @@ class Client_Gui {
             }
         });
 
-
-
         searchResultsFrame.revalidate();
         searchResultsFrame.repaint();
-
-
-
-
     }
 
 
     void addServer(String name , InetAddress ip , int port)
     {
-
         JLabel  namefield = new JLabel(name );
         JLabel ipfield = new JLabel(ip.toString().substring(1));
         JLabel portfield = new JLabel(String.valueOf(port));
@@ -191,8 +161,6 @@ class Client_Gui {
         Insets insets = new Insets(10,10,0,10);
         int anchor = GridBagConstraints.LINE_START;
         int fill = GridBagConstraints.HORIZONTAL;
-
-
 
         GridBagConstraints gbc = new GridBagConstraints(0, client.detectedServerCount,
                                                         1, 1, 1.0D, 1.0D, anchor , fill ,insets , 0, 0);
@@ -210,7 +178,7 @@ class Client_Gui {
                                      gridwidth, gridheight, 1.0D, 1.0D, anchor, fill, insets, 0, 0);
         searchResultsPanel.add(connectButton,gbc);
         searchResultsFrame.add(searchResultsPanel);
-        // System.out.println("4");
+        
         searchResultsFrame.revalidate();
         searchResultsFrame.repaint();
         searchResultsFrame.pack();
@@ -224,26 +192,16 @@ class Client_Gui {
                 searchResultsPanel.removeAll();
                 JLabel connecting = new JLabel("Connecting");
 
-
                 searchResultsPanel.add(connecting);
-
                 searchResultsFrame.revalidate();
                 searchResultsFrame.repaint();
                 searchResultsFrame.pack();
                 searchResultsFrame.setLocation(200,200);
-
-                //  System.out.println("1");
-
                 try{    
                     client.connectToServer();
-
                 }
                 catch(Exception e){}
-
-
-
                 client.gui.startService();
-
             }
         });
     }          
@@ -252,7 +210,6 @@ class Client_Gui {
         searchResultsPanel.removeAll();
         searchResultsPanel.setLayout(new BoxLayout(searchResultsPanel,BoxLayout.Y_AXIS));
         JLabel connected = new JLabel("connected to "+client.serverName);
-
 
         searchResultsPanel.add(connected);
         JButton disconnectButton = new JButton("Disconnect");
@@ -263,9 +220,6 @@ class Client_Gui {
         searchResultsFrame.setLocation(200,200);
         client.startService1();
         client.getServerSignal();
-
-
-
 
         disconnectButton.addActionListener(new ActionListener() {
 
@@ -286,7 +240,6 @@ class Client_Gui {
             }
         });
     }
-
 
     void serverStoppedAlert()
     {
@@ -326,11 +279,8 @@ class Client_Gui {
         });
 
         alertButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
-
-
                 searchResultsPanel.removeAll();
                 searchResultsFrame.setVisible(false);
                 searchResultsFrame.dispose();
@@ -338,9 +288,7 @@ class Client_Gui {
                 alertFrame.setVisible(false);
                 alertFrame.dispose();
                 client.gui.enterButton.doClick();
-
             }
         });
-
     }
 }

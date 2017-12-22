@@ -77,9 +77,6 @@ class Server_Gui
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 // TODO Auto-generated method stub
-
-
-
                 String name = nameField2.getText();
                 server.initializeServer(name);
 
@@ -112,8 +109,6 @@ class Server_Gui
 
             }
         });
-
-
 
         clientConnectionsFrame = new JFrame("Server");
         JPanel clientParentPanel = new JPanel();
@@ -148,17 +143,13 @@ class Server_Gui
 
         clientListPanel.add(flashCount,gbc);
 
-
-
         clientLeftPanel.add(clientListPanel) ;
 
         JPanel stopServerPanel = new JPanel();
         final JButton stopServerButton = new  JButton("Stop Server");
         stopServerPanel.add(stopServerButton);
-        // clientConnectionsFrame.add(stopServerPanel);
+        
         clientLeftPanel.add(stopServerPanel);
-
-
 
         serverLogPanel = new JPanel();
 
@@ -167,14 +158,9 @@ class Server_Gui
         serverLog.setEditable(false); // set textArea non-editable
         JScrollPane scroll = new JScrollPane(serverLog);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        //Add Textarea in to middle panel
+      
         serverLogPanel.add(scroll);
-
-        //serverLogPanel.add(serverLog);
-
-
-        // clientConnectionsFrame.add(clientListPanel);
+              
         clientConnectionsFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         tab.addTab("Clients",clientLeftPanel);
@@ -182,20 +168,13 @@ class Server_Gui
 
         clientParentPanel.add(tab);
 
-
         clientConnectionsFrame.add(clientParentPanel);
         clientConnectionsFrame.pack();
         clientConnectionsFrame.setLocation(200,200);
 
-
-
-
         clientConnectionsFrame.addWindowListener(new WindowAdapter() {
-
             public void windowClosing(WindowEvent x) {
-
                 stopServerButton.doClick();
-
             }
         });
 
@@ -216,7 +195,6 @@ class Server_Gui
                 JButton alertButton1 = new JButton("Yes");
                 JButton alertButton2 =new JButton("No");
                 //alertText.setEnabled(false);
-
 
                 alertPanel.add(alertText);
 
@@ -247,15 +225,10 @@ class Server_Gui
 
                     }
                 });
-
-
                 alertButton2.addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {
                         // TODO Auto-generated method stub
-
-
-
                         alertFrame.setVisible(false);
                         alertFrame.dispose();
 
@@ -275,13 +248,10 @@ class Server_Gui
         {
             sb = new StringBuilder (new StringBuilder(name).append("("+i+")"));
             i++;
-
-
         }
 
         rowMap.put(sb.toString(),server.clientCount);
         clientMap.put(clientSocket, sb.toString());
-
 
         int gridwidth = 1;
         int gridheight = 1;
@@ -306,11 +276,6 @@ class Server_Gui
                                      1, 1, 1.0D, 1.0D, anchor , fill ,insets , 0, 0);
 
         clientListPanel.add(flashCount,gbc);
-
-
-        //   clientListPanel.add(clientPanel);
-
-        // System.out.println("4");
         serverLog.setRows(serverLog.getRows()+2);
 
         clientConnectionsFrame.revalidate();
@@ -318,8 +283,6 @@ class Server_Gui
         clientConnectionsFrame.pack();
 
         serverLog.append("\n"+dateFormat.format(new Date())+" : "+sb.toString()+" connected !!");
-
-
     }
 
     void removeClient(Socket clientSocket)
@@ -331,13 +294,10 @@ class Server_Gui
         Component above[],curr[];
         curr = compGrid.get(rowNo-1);
 
-
         for(int i=rowNo ;i<server.clientCount ;i++)
         {
             above = curr;
             curr = compGrid.get(i);
-
-
             ((JLabel)above[0]).setText(((JLabel)curr[0]).getText());
             ((JLabel)above[1]).setText(((JLabel)curr[1]).getText());
             ((JLabel)above[2]).setText(((JLabel)curr[2]).getText());
@@ -345,7 +305,6 @@ class Server_Gui
             String currClientName = ((JLabel)curr[0]).getText();
 
             rowMap.replace(currClientName,i);
-
         }
 
         curr  = compGrid.get(server.clientCount-1);
@@ -354,8 +313,6 @@ class Server_Gui
         clientListPanel.remove(curr[1]);
         clientListPanel.remove(curr[2]);
         compGrid.remove(compGrid.size()-1);
-
-
 
         rowMap.remove(removedClientName);
         clientMap.remove(clientSocket);
@@ -384,9 +341,7 @@ class Server_Gui
         clientConnectionsFrame.revalidate();
         clientConnectionsFrame.repaint();
         clientConnectionsFrame.pack();
-
     }
-
 
 }
 
