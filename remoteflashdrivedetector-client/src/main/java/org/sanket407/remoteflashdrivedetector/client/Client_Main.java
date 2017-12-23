@@ -1,4 +1,4 @@
-package org.sanket407.remoteflashdrivedetector;
+package org.sanket407.remoteflashdrivedetector.client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -9,15 +9,10 @@ public class Client_Main
 {
     public static void main(String[] args) throws Exception {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                final Client_Gui gui = new Client_Gui();
-
+                Client_Gui gui = new Client_Gui("ubuntu");
             }
         });
-
-
-
-    }}
+    }
+}
