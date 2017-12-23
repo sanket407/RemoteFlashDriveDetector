@@ -11,7 +11,7 @@ public class Client_Main
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Client_Gui gui = new Client_Gui();
+                Client_Gui gui = new Client_Gui("ubuntu");
             }
         });
     }

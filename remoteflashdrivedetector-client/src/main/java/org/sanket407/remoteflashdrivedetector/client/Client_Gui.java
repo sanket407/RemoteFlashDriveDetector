@@ -22,12 +22,16 @@ class Client_Gui {
 
     JFrame startupFrame, searchResultsFrame ; 
     JPanel searchResultsPanel ;
-    Client client ;
+    AbstractClient client ;
     JButton enterButton;
 
-    public Client_Gui()
+    public Client_Gui(String OS)
     {   
-        client = new Client();
+        if(OS.toLowerCase().equals("windows"))
+            client = new WindowsClient();
+        else
+            client = new UbuntuClient();
+        
         client.gui = this;
 
         startupFrame = new JFrame ("Client");
@@ -218,7 +222,7 @@ class Client_Gui {
         searchResultsFrame.repaint();
         searchResultsFrame.pack();
         searchResultsFrame.setLocation(200,200);
-        client.startService1();
+        client.startService();
         client.getServerSignal();
 
         disconnectButton.addActionListener(new ActionListener() {

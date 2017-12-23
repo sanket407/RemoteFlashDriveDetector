@@ -11,7 +11,7 @@ import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
 
-class Client
+abstract class AbstractClient
 {
 
     String name;                 //general information
@@ -29,7 +29,7 @@ class Client
     PrintWriter sendToServer;
     static File[] oldListRoot;
     Client_Gui gui;
-
+    static int cnt;
     void initializeClient(String name) 
     {
         try{
@@ -81,7 +81,7 @@ class Client
         BufferedReader readFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         return ;
     }
-
+/*
     void startService1()
     {
         oldListRoot = File.listRoots();
@@ -119,28 +119,21 @@ class Client
 
     void startService2()
     {
-        try
-        {
-            Runtime.getRuntime().exec("mount");
-        }
-        catch (IOException e1)
-        {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-
+       final File root = new File("/media/sanket/");
+        cnt = root.listFiles().length;
+       
         new Thread(new Runnable(){
             public void run(){
                 while (true) {
                     try{
-                        if (File.listRoots().length > oldListRoot.length) {
+                        if (root.listFiles().length > cnt) {
                             sendToServer.println("inserted");
-                            oldListRoot = File.listRoots();
+                            cnt = root.listFiles().length;
                             detected++;
-                        } else if (File.listRoots().length < oldListRoot.length) {
+                        } else if (root.listFiles().length < cnt) {
                             sendToServer.println("removed");
 
-                            oldListRoot = File.listRoots();
+                            cnt = root.listFiles().length;
                             detected--;
                         }
                         else
@@ -148,6 +141,7 @@ class Client
                             Thread.sleep(1000);
                             if(clientSocket.isClosed())
                                 break;
+                            System.out.println(cnt);
                         }
                     }
                     catch(Exception e)
@@ -158,7 +152,7 @@ class Client
             }
         }).start();
     }
-
+*/
     void getServerSignal()
     {
         new Thread(new Runnable() {
@@ -192,4 +186,7 @@ class Client
             System.out.println(e.toString());
         }
     }
+    
+    abstract void startService();
+    
 }
