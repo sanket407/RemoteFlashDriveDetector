@@ -1,14 +1,21 @@
 package org.sanket407.remoteflashdrivedetector.client;
 
 import java.io.File;
+import java.util.Properties;
 
 public class WindowsClient extends AbstractClient
 {
     
     
+    public WindowsClient(Properties properties)
+    {
+        super(properties);
+    }
+
     void startService()
     {
         oldListRoot = File.listRoots();
+        cnt = 0;
         new Thread(new Runnable(){
 
             public void run(){

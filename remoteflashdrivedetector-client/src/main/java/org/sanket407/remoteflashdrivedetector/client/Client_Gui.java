@@ -25,15 +25,15 @@ class Client_Gui {
     AbstractClient client ;
     JButton enterButton;
 
-    public Client_Gui(String OS)
-    {   
-        if(OS.toLowerCase().equals("windows"))
-            client = new WindowsClient();
-        else
-            client = new UbuntuClient();
-        
+    public Client_Gui(AbstractClient client)
+    {           
+        startupWindow();
+        this.client = client;
         client.gui = this;
-
+    }
+    
+    void startupWindow()
+    {
         startupFrame = new JFrame ("Client");
         final JPanel startupPanel = new JPanel();
         final  JLabel nameLabel = new JLabel("Enter name of this machine");
@@ -109,7 +109,6 @@ class Client_Gui {
             }
         });
     }
-
     void initializeSearchPanel()
     {
         searchResultsPanel = new JPanel();

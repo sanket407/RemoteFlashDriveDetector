@@ -10,6 +10,12 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Properties;
+
+import javax.swing.SwingUtilities;
+
+
 
 abstract class AbstractClient
 {
@@ -30,24 +36,45 @@ abstract class AbstractClient
     static File[] oldListRoot;
     Client_Gui gui;
     static int cnt;
+    
+    public AbstractClient(Properties properties)
+    {
+        InetAddress ip = null;
+        try
+        {
+            ip = InetAddress.getByName(properties.getProperty("ip"));
+        }
+        catch (UnknownHostException e)
+        {
+            e.printStackTrace();
+        }
+        setIpAddress(ip);
+        int port = Integer.parseInt(properties.getProperty("port"));
+        setPort(port);
+        
+    }
+    
     void initializeClient(String name) 
     {
-        try{
-            this.name = name;
-            this.ip = InetAddress.getLocalHost();
-            this.detected = 0;
-            this.group = InetAddress.getByName("237.0.0.1");
-            this.port = 9000;
-            System.out.println(this.name);
+        setName(name);
+        try
+        {
+            setGroup("237.0.0.1");
         }
-        catch(Exception e){}
-    }
+        catch (UnknownHostException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    } 
+
+    
 
     void searchServer()
     {
         try
         {
-            InetAddress bind = InetAddress.getByName("192.168.1.105");
+            //InetAddress bind = InetAddress.getByName("192.168.1.105");
             MulticastSocket socket = new MulticastSocket(new InetSocketAddress(port));
             socket.joinGroup(group);
 
@@ -55,12 +82,12 @@ abstract class AbstractClient
 
             socket.receive(packet);
 
-            serverName = new String( packet.getData(), 0,
-                                     packet.getLength() );
+            setServerName(new String( packet.getData(), 0,
+                                     packet.getLength() ));
 
-            serverIp = packet.getAddress();
+            setServerIp(packet.getAddress());
 
-            serverPort = packet.getPort();
+            setServerPort(packet.getPort());
 
             detectedServerCount++;
 
@@ -73,86 +100,17 @@ abstract class AbstractClient
 
     }
 
+    
+
     void connectToServer()throws Exception
-    {
+    {   
         clientSocket = new Socket(serverIp,serverPort);
         sendToServer = new PrintWriter(clientSocket.getOutputStream(), true);
         sendToServer.println(this.name);
         BufferedReader readFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         return ;
     }
-/*
-    void startService1()
-    {
-        oldListRoot = File.listRoots();
-        new Thread(new Runnable(){
 
-            public void run(){
-                while (true) {
-                    try{
-                        if (File.listRoots().length > oldListRoot.length) {
-                            sendToServer.println("inserted");
-                            oldListRoot = File.listRoots();
-                            detected++;
-
-                        } else if (File.listRoots().length < oldListRoot.length) {
-                            sendToServer.println("removed");
-
-                            oldListRoot = File.listRoots();
-                            detected--;
-                        }
-                        else
-                        {    
-                            Thread.sleep(1000);
-                            if(clientSocket.isClosed())
-                                break;
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        System.out.println(e.toString());
-                    }
-                }
-            }
-        }).start();
-    }
-
-    void startService2()
-    {
-       final File root = new File("/media/sanket/");
-        cnt = root.listFiles().length;
-       
-        new Thread(new Runnable(){
-            public void run(){
-                while (true) {
-                    try{
-                        if (root.listFiles().length > cnt) {
-                            sendToServer.println("inserted");
-                            cnt = root.listFiles().length;
-                            detected++;
-                        } else if (root.listFiles().length < cnt) {
-                            sendToServer.println("removed");
-
-                            cnt = root.listFiles().length;
-                            detected--;
-                        }
-                        else
-                        {    
-                            Thread.sleep(1000);
-                            if(clientSocket.isClosed())
-                                break;
-                            System.out.println(cnt);
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        System.out.println(e.toString());
-                    }
-                }
-            }
-        }).start();
-    }
-*/
     void getServerSignal()
     {
         new Thread(new Runnable() {
@@ -177,16 +135,55 @@ abstract class AbstractClient
     {
         try{
 
-            this.clientSocket.close();
-            this.serverIp=null;
-            this.serverName=null;
-            this.port=0;
+            clientSocket.close();
+            serverIp=null;
+            serverName=null;
+            port=0;
+            
         }
         catch(Exception e){
             System.out.println(e.toString());
         }
     }
     
+    private void setIpAddress(InetAddress ip)
+    {
+        this.ip = ip;
+    }
+
+    private void setPort(int port)
+    {
+        this.port = port;
+    }
+    
+    private void setName(String name1)
+    {
+        name = name1;
+        
+    }
+
+    private void setGroup(String string) throws UnknownHostException
+    {
+        group = InetAddress.getByName(string);        
+    }
+    
+    private void setServerName(String name)
+    {
+        serverName = name;
+    }
+
+    private void setServerIp(InetAddress address)
+    {
+        serverIp = address;
+    }
+
+    private void setServerPort(int port)
+    {
+        serverPort = port;
+    }
+    
+       
     abstract void startService();
+    
     
 }

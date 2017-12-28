@@ -1,9 +1,15 @@
 package org.sanket407.remoteflashdrivedetector.client;
 
 import java.io.File;
+import java.util.Properties;
 
 public class UbuntuClient extends AbstractClient
 {
+    public UbuntuClient(Properties properties)
+    {
+        super(properties);
+    }
+
     void startService()
     {
        final File root = new File("/media/sanket/");

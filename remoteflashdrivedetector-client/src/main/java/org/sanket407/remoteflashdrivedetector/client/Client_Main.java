@@ -12,22 +12,43 @@ public class Client_Main
 {
     public static void main(String[] args) throws Exception {
 
-        Properties prop = new Properties();
+        Properties properties = new Properties();
         try 
         {
             InputStream is = Client_Main.class.getResourceAsStream("/settings.properties");
-            prop.load(is);
+            properties.load(is);
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
         
-        final String operatingSystem = prop.getProperty("operating_system");
+        final String operatingSystem = properties.getProperty("operating_system");
+        final AbstractClient client ;
         
-        SwingUtilities.invokeLater(new Runnable() {
+        if(operatingSystem.equals("ubuntu"))
+            {
+                client = new UbuntuClient(properties);
+                startGUI(client);
+            }
+        else if(operatingSystem.equals("windows"))
+            {
+                client = new WindowsClient(properties);
+                startGUI(client);
+            }
+        else
+            {
+                System.out.println("Invalid operating system property.");
+                System.exit(1);
+            }
+    }
+    
+    static void startGUI(final AbstractClient client)
+    {   
+      SwingUtilities.invokeLater(new Runnable() {
+
             public void run() {
-                Client_Gui gui = new Client_Gui(operatingSystem);
+                final Client_Gui gui = new Client_Gui(client);
             }
         });
     }
