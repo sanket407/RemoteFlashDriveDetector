@@ -27,9 +27,9 @@ class Client_Gui {
 
     public Client_Gui(AbstractClient client)
     {           
-        startupWindow();
         this.client = client;
         client.gui = this;
+        startupWindow();
     }
     
     void startupWindow()

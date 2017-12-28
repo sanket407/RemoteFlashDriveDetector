@@ -39,12 +39,17 @@ class Server_Gui
     Server server;
     DateFormat dateFormat ;
 
-    public Server_Gui()
+    public Server_Gui(Server server)
     {   
 
-        server = new Server();
+        this.server = server;
         server.gui = this;
 
+        startupWindow();
+    }
+    
+    void startupWindow()
+    {
         startupFrame = new JFrame ("Server");
         dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         final JPanel startupPanel = new JPanel();

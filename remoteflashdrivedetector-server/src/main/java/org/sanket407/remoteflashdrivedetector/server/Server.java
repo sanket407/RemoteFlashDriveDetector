@@ -10,8 +10,12 @@ import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
+import javax.swing.GroupLayout.SequentialGroup;
 
 class Server
 {
@@ -26,19 +30,45 @@ class Server
     HashMap  <Socket,String> clientSocketMap;
 
     Server_Gui gui;
+    
+    Server(Properties properties)
+    {
+        String inetAdd = properties.getProperty("ip");
+        InetAddress ip = null;
+        try
+        {   
+            System.out.println(inetAdd);
+            ip = InetAddress.getByName(inetAdd);
+        }
+        catch (UnknownHostException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        setIp(ip);
+        
+        int port = Integer.parseInt(properties.getProperty("port"));
+        setPort(port);
+    }
+    
+  
 
     void initializeServer(String name) 
     {
-        try{
-            this.ip = InetAddress.getLocalHost(); 
-            this.name = name;
-            this.clientCount = 0;
-            this.group = InetAddress.getByName("237.0.0.1");
-            this.port = 9000;
-            this.clientSocketMap = new HashMap<Socket,String>();
+        setName(name);
+        try
+        {
+            setGroup("237.0.0.1");
         }
-        catch(Exception e){}
+        catch (UnknownHostException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        setclientSocketMap(new HashMap<Socket,String>());
     }
+    
+   
 
     void startServer()throws IOException
     {
@@ -48,7 +78,7 @@ class Server
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    InetAddress bind = InetAddress.getByName("192.168.1.105");
+                    InetAddress bind = ip;
                     MulticastSocket socket = new MulticastSocket(new InetSocketAddress(bind,port));
                     socket.joinGroup(group);
 
@@ -139,5 +169,31 @@ class Server
             }
             catch(Exception e){}
         }
+    }
+    
+    private void setIp(InetAddress ip2)
+    {
+       ip = ip2;        
+    }
+
+    private void setPort(int port)
+    {
+        this.port = port;        
+    }
+    
+    private void setGroup(String string) throws UnknownHostException
+    {
+        group = InetAddress.getByName(string);        
+    }
+
+    private void setName(String name)
+    {
+        this.name = name;        
+    }
+
+    private void setclientSocketMap(HashMap<Socket, String> hashMap)
+    {
+        this.clientSocketMap = hashMap;
+        
     }
 }
