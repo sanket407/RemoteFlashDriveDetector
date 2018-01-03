@@ -11,10 +11,11 @@ public class UbuntuClient extends AbstractClient
     }
 
     void startService()
-    {
-       final File root = new File("/media/sanket/");
+    {  
+        String userName = getProperty("username");
+        final File root = new File("/media/" + userName + "/");
         cnt = root.listFiles().length;
-       
+
         new Thread(new Runnable(){
             public void run(){
                 while (true) {

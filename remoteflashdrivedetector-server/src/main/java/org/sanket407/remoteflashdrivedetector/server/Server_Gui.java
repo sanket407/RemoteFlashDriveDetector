@@ -43,11 +43,11 @@ class Server_Gui
     {   
 
         this.server = server;
-        server.gui = this;
+        server.setGui(this);
 
         startupWindow();
     }
-    
+
     void startupWindow()
     {
         startupFrame = new JFrame ("Server");
@@ -153,7 +153,7 @@ class Server_Gui
         JPanel stopServerPanel = new JPanel();
         final JButton stopServerButton = new  JButton("Stop Server");
         stopServerPanel.add(stopServerButton);
-        
+
         clientLeftPanel.add(stopServerPanel);
 
         serverLogPanel = new JPanel();
@@ -163,9 +163,9 @@ class Server_Gui
         serverLog.setEditable(false); // set textArea non-editable
         JScrollPane scroll = new JScrollPane(serverLog);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-      
+
         serverLogPanel.add(scroll);
-              
+
         clientConnectionsFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         tab.addTab("Clients",clientLeftPanel);
@@ -255,7 +255,7 @@ class Server_Gui
             i++;
         }
 
-        rowMap.put(sb.toString(),server.clientCount);
+        rowMap.put(sb.toString(),server.getClientCount().get());
         clientMap.put(clientSocket, sb.toString());
 
         int gridwidth = 1;
@@ -271,13 +271,13 @@ class Server_Gui
 
         compGrid.add( new Component [] {clientName , clientAdd , flashCount}); //compGrid[i] stores the compList at row i+1 in grid  
 
-        GridBagConstraints gbc = new GridBagConstraints(0,server.clientCount,
+        GridBagConstraints gbc = new GridBagConstraints(0,server.getClientCount().get(),
                                                         1, 1, 1.0D, 1.0D, anchor , fill ,insets , 0, 0);
         clientListPanel.add(clientName,gbc);
-        gbc = new GridBagConstraints(1, server.clientCount,
+        gbc = new GridBagConstraints(1, server.getClientCount().get(),
                                      1, 1, 1.0D, 1.0D, anchor , fill ,insets , 0, 0);
         clientListPanel.add(clientAdd,gbc);
-        gbc = new GridBagConstraints(2, server.clientCount,
+        gbc = new GridBagConstraints(2, server.getClientCount().get(),
                                      1, 1, 1.0D, 1.0D, anchor , fill ,insets , 0, 0);
 
         clientListPanel.add(flashCount,gbc);
@@ -299,7 +299,7 @@ class Server_Gui
         Component above[],curr[];
         curr = compGrid.get(rowNo-1);
 
-        for(int i=rowNo ;i<server.clientCount ;i++)
+        for(int i=rowNo ;i<server.getClientCount().get() ;i++)
         {
             above = curr;
             curr = compGrid.get(i);
@@ -312,7 +312,7 @@ class Server_Gui
             rowMap.replace(currClientName,i);
         }
 
-        curr  = compGrid.get(server.clientCount-1);
+        curr  = compGrid.get(server.getClientCount().get()-1);
 
         clientListPanel.remove(curr[0]);
         clientListPanel.remove(curr[1]);

@@ -46,7 +46,5 @@ public class WindowsClient extends AbstractClient
                 }
             }
         }).start();
-    }
-    
-    
+    }        
 }

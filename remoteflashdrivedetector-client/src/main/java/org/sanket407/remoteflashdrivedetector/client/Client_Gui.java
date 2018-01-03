@@ -28,10 +28,10 @@ class Client_Gui {
     public Client_Gui(AbstractClient client)
     {           
         this.client = client;
-        client.gui = this;
+        client.setGui(this);
         startupWindow();
     }
-    
+
     void startupWindow()
     {
         startupFrame = new JFrame ("Client");
@@ -50,13 +50,13 @@ class Client_Gui {
         startupFrame.pack();
         startupFrame.setLocation(200,200);
         startupFrame.setVisible(true);
-       
+
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 // TODO Auto-generated method stub
                 String name = nameField.getText();
                 client.initializeClient(name);
-                client.detectedServerCount=0;
+                client.setDetectedServerCount(0);
                 startupPanel.removeAll();
                 startupPanel.add(searchButton);
                 startupFrame.revalidate();
@@ -165,23 +165,23 @@ class Client_Gui {
         int anchor = GridBagConstraints.LINE_START;
         int fill = GridBagConstraints.HORIZONTAL;
 
-        GridBagConstraints gbc = new GridBagConstraints(0, client.detectedServerCount,
+        GridBagConstraints gbc = new GridBagConstraints(0, client.getDetectedServerCount(),
                                                         1, 1, 1.0D, 1.0D, anchor , fill ,insets , 0, 0);
         searchResultsPanel.add(namefield,gbc);
 
-        gbc = new GridBagConstraints(1, client.detectedServerCount,
+        gbc = new GridBagConstraints(1, client.getDetectedServerCount(),
                                      gridwidth, gridheight, 1.0D, 1.0D, anchor, fill, insets, 0, 0);
         searchResultsPanel.add(ipfield,gbc);
 
-        gbc = new GridBagConstraints(2, client.detectedServerCount,
+        gbc = new GridBagConstraints(2, client.getDetectedServerCount(),
                                      gridwidth, gridheight, 1.0D, 1.0D, anchor, fill, insets, 0, 0);
         searchResultsPanel.add(portfield,gbc);
 
-        gbc = new GridBagConstraints(3, client.detectedServerCount,
+        gbc = new GridBagConstraints(3, client.getDetectedServerCount(),
                                      gridwidth, gridheight, 1.0D, 1.0D, anchor, fill, insets, 0, 0);
         searchResultsPanel.add(connectButton,gbc);
         searchResultsFrame.add(searchResultsPanel);
-        
+
         searchResultsFrame.revalidate();
         searchResultsFrame.repaint();
         searchResultsFrame.pack();
@@ -204,7 +204,7 @@ class Client_Gui {
                     client.connectToServer();
                 }
                 catch(Exception e){}
-                client.gui.startService();
+                client.getGui().startService();
             }
         });
     }          
@@ -212,7 +212,7 @@ class Client_Gui {
     {
         searchResultsPanel.removeAll();
         searchResultsPanel.setLayout(new BoxLayout(searchResultsPanel,BoxLayout.Y_AXIS));
-        JLabel connected = new JLabel("connected to "+client.serverName);
+        JLabel connected = new JLabel("connected to "+client.getServerName());
 
         searchResultsPanel.add(connected);
         JButton disconnectButton = new JButton("Disconnect");
@@ -237,7 +237,7 @@ class Client_Gui {
                     searchResultsFrame.setVisible(false);
                     searchResultsFrame.dispose();
                     startupFrame.setVisible(true);    
-                    client.gui.enterButton.doClick();
+                    client.getGui().enterButton.doClick();
                 }
                 catch(Exception e){}
             }
@@ -276,7 +276,7 @@ class Client_Gui {
                 startupFrame.setVisible(true);  
                 alertFrame.setVisible(false);
                 alertFrame.dispose();
-                client.gui.enterButton.doClick();
+                client.getGui().enterButton.doClick();
             }
 
         });
@@ -290,7 +290,7 @@ class Client_Gui {
                 startupFrame.setVisible(true);    
                 alertFrame.setVisible(false);
                 alertFrame.dispose();
-                client.gui.enterButton.doClick();
+                client.getGui().enterButton.doClick();
             }
         });
     }

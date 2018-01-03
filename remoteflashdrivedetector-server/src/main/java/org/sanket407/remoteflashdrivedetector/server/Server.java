@@ -14,30 +14,30 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.GroupLayout.SequentialGroup;
 
 class Server
 {
 
-    InetAddress ip;
-    String name;
-    int clientCount;
-    InetAddress group;
-    int port;
+    private InetAddress ip;
+    private String name;
+    private AtomicInteger clientCount;
+    private InetAddress group;
+    private int port;
+    private MulticastSocket socket;
+    private ServerSocket serverSocket;
+    private ConcurrentHashMap  <Socket,String> clientSocketMap;
 
-    ServerSocket serverSocket;
-    HashMap  <Socket,String> clientSocketMap;
+    private Server_Gui gui;
 
-    Server_Gui gui;
-    
     Server(Properties properties)
     {
         String inetAdd = properties.getProperty("ip");
         InetAddress ip = null;
         try
         {   
-            System.out.println(inetAdd);
             ip = InetAddress.getByName(inetAdd);
         }
         catch (UnknownHostException e)
@@ -46,12 +46,12 @@ class Server
             e.printStackTrace();
         }
         setIp(ip);
-        
+
         int port = Integer.parseInt(properties.getProperty("port"));
         setPort(port);
     }
-    
-  
+
+
 
     void initializeServer(String name) 
     {
@@ -65,21 +65,22 @@ class Server
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        setclientSocketMap(new HashMap<Socket,String>());
+        setclientSocketMap(new ConcurrentHashMap<Socket,String>());
     }
-    
-   
+
+
 
     void startServer()throws IOException
     {
         serverSocket = new ServerSocket(this.port);
+        setClientCount(new AtomicInteger(0));
 
         final byte[] bt = this.name.getBytes();
         new Thread(new Runnable() {
             public void run() {
                 try {
                     InetAddress bind = ip;
-                    MulticastSocket socket = new MulticastSocket(new InetSocketAddress(bind,port));
+                    socket = new MulticastSocket(new InetSocketAddress(bind,port));
                     socket.joinGroup(group);
 
                     while(true) 
@@ -99,24 +100,27 @@ class Server
             public void run(){
                 try
                 {
-                   while(true)
+                    while(true)
                     {
                         Socket clientSocket =  serverSocket.accept();
-                        clientCount++;
+                        getClientCount().incrementAndGet();
                         BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                         String name = br.readLine();
                         PrintWriter out = new PrintWriter (clientSocket.getOutputStream(),true);
                         out.println("accepted");
-                        gui.addClient(clientSocket,name,clientSocket.getInetAddress(),clientSocket.getPort());
+                        synchronized(getGui())
+                        {
+                            getGui().addClient(clientSocket,name,clientSocket.getInetAddress(),clientSocket.getPort());
+                        }
                         clientSocketMap.put(clientSocket,name);
                         startDetecting(clientSocket);
                         Thread.sleep(1000);
                     }
-                   }
-                    catch (Exception e)
-                    {
-                        System.out.println(e.toString());
-                    }
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e.toString());
+                }
             } 
         }).start();
     }
@@ -135,18 +139,28 @@ class Server
                         if(status.equals("close"))
                         {//System.out.println(clientSocketMap.get(clientSocket)+" disconnected");
                             clientSocketMap.remove(clientSocket);
-                            gui.removeClient(clientSocket);
-                            clientCount--;
+                            synchronized(getGui())
+                            {
+                                getGui().removeClient(clientSocket);
+                            }
+
+                            getClientCount().decrementAndGet();
                             clientSocket.close(); 
                             break;
                         }
                         else if(status.equals("inserted"))
-                        {
-                            gui.update(clientSocket,1);
+                        {   
+                            synchronized(getGui())
+                            {
+                                getGui().update(clientSocket,1);
+                            }
                         }
                         else
-                        {
-                            gui.update(clientSocket,-1);
+                        {   
+                            synchronized(getGui())
+                            {
+                                getGui().update(clientSocket,-1);
+                            }
                         }
                         Thread.sleep(1000);}
 
@@ -169,18 +183,21 @@ class Server
             }
             catch(Exception e){}
         }
+        socket.close();
+
+
     }
-    
+
     private void setIp(InetAddress ip2)
     {
-       ip = ip2;        
+        ip = ip2;        
     }
 
     private void setPort(int port)
     {
         this.port = port;        
     }
-    
+
     private void setGroup(String string) throws UnknownHostException
     {
         group = InetAddress.getByName(string);        
@@ -191,9 +208,29 @@ class Server
         this.name = name;        
     }
 
-    private void setclientSocketMap(HashMap<Socket, String> hashMap)
+    private void setclientSocketMap(ConcurrentHashMap<Socket, String> hashMap)
     {
         this.clientSocketMap = hashMap;
-        
+
+    }
+
+    public Server_Gui getGui()
+    {
+        return gui;
+    }
+
+    public void setGui(Server_Gui gui)
+    {
+        this.gui = gui;
+    }
+
+    public AtomicInteger getClientCount()
+    {
+        return clientCount;
+    }
+
+    public void setClientCount(AtomicInteger clientCount)
+    {
+        this.clientCount = clientCount;
     }
 }

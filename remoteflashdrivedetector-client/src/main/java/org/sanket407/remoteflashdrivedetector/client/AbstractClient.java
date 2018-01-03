@@ -15,47 +15,36 @@ import java.util.Properties;
 
 import javax.swing.SwingUtilities;
 
-
-
 abstract class AbstractClient
 {
 
-    String name;                 //general information
-    InetAddress ip;
-    int  detected;
-    InetAddress group; 
-    int port ;
+    private String name;                 //general information
+    private InetAddress ip;
+    protected int  detected;
+    private InetAddress group; 
+    private int port ;
 
-    int detectedServerCount;
-    String serverName;           //server information 
-    InetAddress serverIp;
-    int serverPort;
+    private int detectedServerCount;
+    private String serverName;           //server information 
+    private InetAddress serverIp;
+    private int serverPort;
 
-    Socket clientSocket;          //socket information for tcp-ip
-    PrintWriter sendToServer;
-    static File[] oldListRoot;
-    Client_Gui gui;
-    static int cnt;
-    
+    protected Socket clientSocket;          //socket information for tcp-ip
+    protected PrintWriter sendToServer;
+    protected static File[] oldListRoot;
+    private Client_Gui gui;
+    protected static int cnt;
+    private Properties properties;
+
     public AbstractClient(Properties properties)
-    {
-        InetAddress ip = null;
-        try
-        {
-            ip = InetAddress.getByName(properties.getProperty("ip"));
-        }
-        catch (UnknownHostException e)
-        {
-            e.printStackTrace();
-        }
-        setIpAddress(ip);
-        int port = Integer.parseInt(properties.getProperty("port"));
-        setPort(port);
-        
+    {   
+        setProperties(properties);
     }
-    
+
     void initializeClient(String name) 
-    {
+    {   
+        setIpAddress(getProperty("ip"));
+        setPort(getProperty("port"));
         setName(name);
         try
         {
@@ -68,13 +57,10 @@ abstract class AbstractClient
         }
     } 
 
-    
-
     void searchServer()
     {
         try
         {
-            //InetAddress bind = InetAddress.getByName("192.168.1.105");
             MulticastSocket socket = new MulticastSocket(new InetSocketAddress(port));
             socket.joinGroup(group);
 
@@ -83,15 +69,15 @@ abstract class AbstractClient
             socket.receive(packet);
 
             setServerName(new String( packet.getData(), 0,
-                                     packet.getLength() ));
+                                      packet.getLength() ));
 
             setServerIp(packet.getAddress());
 
             setServerPort(packet.getPort());
 
-            detectedServerCount++;
+            setDetectedServerCount(getDetectedServerCount() + 1);
 
-            gui.addServer(serverName, serverIp, serverPort);
+            getGui().addServer(getServerName(), serverIp, serverPort);
 
         } 
         catch (Exception e) {
@@ -99,8 +85,6 @@ abstract class AbstractClient
         }
 
     }
-
-    
 
     void connectToServer()throws Exception
     {   
@@ -123,7 +107,7 @@ abstract class AbstractClient
 
                     if(signal.equals("close"))
                     {
-                        gui.serverStoppedAlert();
+                        getGui().serverStoppedAlert();
                     }
                 }
                 catch(Exception e){}
@@ -137,36 +121,44 @@ abstract class AbstractClient
 
             clientSocket.close();
             serverIp=null;
-            serverName=null;
+            setServerName(null);
             port=0;
-            
+
         }
         catch(Exception e){
             System.out.println(e.toString());
         }
     }
-    
-    private void setIpAddress(InetAddress ip)
+
+    private void setIpAddress(String _ip) 
     {
-        this.ip = ip;
+        try
+        {
+            this.ip = InetAddress.getByName(_ip);
+        }
+        catch (UnknownHostException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
-    private void setPort(int port)
+    private void setPort(String _port)
     {
-        this.port = port;
+        this.port = Integer.parseInt(_port);
     }
-    
+
     private void setName(String name1)
     {
         name = name1;
-        
+
     }
 
     private void setGroup(String string) throws UnknownHostException
     {
         group = InetAddress.getByName(string);        
     }
-    
+
     private void setServerName(String name)
     {
         serverName = name;
@@ -181,9 +173,41 @@ abstract class AbstractClient
     {
         serverPort = port;
     }
+
+    private void setProperties(Properties prop)
+    {
+        properties = prop;
+    }
+
+    protected String getProperty(String name)
+    {
+        return properties.getProperty(name);
+    }
+
+    public Client_Gui getGui()
+    {
+        return gui;
+    }
+
+    public void setGui(Client_Gui gui)
+    {
+        this.gui = gui;
+    }
+
+    public int getDetectedServerCount()
+    {
+        return detectedServerCount;
+    }
+
+    public void setDetectedServerCount(int detectedServerCount)
+    {
+        this.detectedServerCount = detectedServerCount;
+    }
+
+    public String getServerName()
+    {
+        return serverName;
+    }
     
-       
     abstract void startService();
-    
-    
 }
